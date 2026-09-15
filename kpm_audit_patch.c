@@ -6,9 +6,9 @@
 #include <linux/kernel.h>
 
 KPM_NAME("AuditPatch KPM");
-KPM_VERSION("v0.0.3");
+KPM_VERSION("v0.0.4");
 KPM_LICENSE("GPL v3");
-KPM_AUTHOR("Bruno Ancona");
+KPM_AUTHOR("Bruno Ancona & WHKL21");
 KPM_DESCRIPTION("Replace sensitive context in audit log");
 
 struct audit_buffer;
@@ -23,7 +23,7 @@ void before_audit_log_format(hook_fargs3_t *args, void *udata)
     if (percent && percent[1] == 's' && strchr(percent + 1, '%') == NULL && strstr(fmt, "tcontext=")) {
         const char *tcontext = (const char *)args->arg2;
 
-        if (unlikely(strstr(tcontext, ":su:") || strstr(tcontext, ":magisk:"))) {
+        if (unlikely(strstr(tcontext, ":su:") || strstr(tcontext, ":magisk:") || strstr(tcontext, ":ksu:"))) {
             static const char *kernel_str = "u:r:priv_app:s0:c512,c768";
             args->arg2 = (uintptr_t)kernel_str;
         }
